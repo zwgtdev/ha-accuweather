@@ -2,7 +2,7 @@
 from datetime import timedelta
 
 ATTRIBUTION = "Data provided by AccuWeather"
-DEFAULT_UPDATE_INTERVAL = timedelta(minutes=1)
+DEFAULT_UPDATE_INTERVAL = timedelta(minutes=30)
 DOMAIN = "accuweather"
 
 CONDITION_CLASSES = {
