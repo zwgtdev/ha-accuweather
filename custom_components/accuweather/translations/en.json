@@ -14,7 +14,6 @@
     },
     "error": {
       "cannot_connect": "Failed to connect.",
-      "invalid_sensors_data": "Invalid sensors' data for this measuring station.",
       "invalid_api_key": "Your API Key is invalid.",
       "number_of_requests_exceeded": "The allowed number of requests to Accuweather API has been exceeded. You have to wait or change API Key."
     },

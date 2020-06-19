@@ -1,0 +1,25 @@
+{
+    "config": {
+      "step": {
+        "user": {
+          "title": "AccuWeather",
+          "description": "Jeśli potrzebujesz pomocy z konfiguracją, przejdź na stronę: https://github.com/bieniu/ha-accuweather",
+          "data": {
+            "name": "Nazwa integracji",
+            "api_key": "Klucz API",
+            "latitude": "Szerokość geograficzna",
+            "longitude": "Długość geograficzna"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Nie można nawiązać połączenia.",
+        "invalid_api_key": "Klucz API jest nieprawidłowy.",
+        "number_of_requests_exceeded": "Dozwolona liczba zapytań do interfejsu API Accuweather została przekroczona. Musisz poczekać lub zmienić klucz API."
+      },
+      "abort": {
+        "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja AccuWeather." 
+      }
+    }
+  }
+  
