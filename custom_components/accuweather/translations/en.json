@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AccuWeather",
+        "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather",
+        "data": {
+          "name": "Name of the integration",
+          "api_key": "API Key",
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect.",
+      "invalid_sensors_data": "Invalid sensors' data for this measuring station.",
+      "invalid_api_key": "Your API Key is invalid.",
+      "number_of_requests_exceeded": "The allowed number of requests to Accuweather API has been exceeded. You have to wait or change API Key."
+    },
+    "abort": {
+      "single_instance_allowed": "Only a single configuration of AccuWeather is allowed." 
+    }
+  }
+}
