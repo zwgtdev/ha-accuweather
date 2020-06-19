@@ -1,0 +1,6 @@
+{
+  "name": "AccuWeather",
+  "homeassistant": "0.109.0",
+  "iot_class": "cloud_poll",
+  "domains": ["weather", "sensor"]
+}
