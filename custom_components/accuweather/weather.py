@@ -88,7 +88,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def wind_bearing(self):
         """Return the wind bearing."""
-        return self.coordinator.data["Wind"]["Direction"]["English"]
+        return self.coordinator.data["Wind"]["Direction"]["Degrees"]
 
     @property
     def visibility(self):
