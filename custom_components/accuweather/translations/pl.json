@@ -14,8 +14,7 @@
       },
       "error": {
         "cannot_connect": "Nie można nawiązać połączenia.",
-        "invalid_api_key": "Klucz API jest nieprawidłowy.",
-        "number_of_requests_exceeded": "Dozwolona liczba zapytań do interfejsu API Accuweather została przekroczona. Musisz poczekać lub zmienić klucz API."
+        "invalid_api_key": "Klucz API jest nieprawidłowy."
       },
       "abort": {
         "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja AccuWeather." 

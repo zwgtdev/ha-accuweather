@@ -2,7 +2,7 @@
 import asyncio
 import logging
 
-from accuweather import AccuWeather, ApiError, InvalidApiKeyError, RequestsExceededError
+from accuweather import AccuWeather, ApiError, InvalidApiKeyError
 from aiohttp.client_exceptions import ClientConnectorError
 from async_timeout import timeout
 from homeassistant.const import CONF_API_KEY
@@ -85,11 +85,7 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             with timeout(10):
                 current = await self.accuweather.async_get_current_conditions()
-        except (
-            ApiError,
-            ClientConnectorError,
-            InvalidApiKeyError,
-            RequestsExceededError,
-        ) as error:
+        except (ApiError, ClientConnectorError, InvalidApiKeyError) as error:
             raise UpdateFailed(error)
+        _LOGGER.debug("Requests remaining: %s", self.accuweather.requests_remaining)
         return current
