@@ -1,4 +1,4 @@
-# ha-accuweather
+# AccuWeather integration
 `AccuWeather` integration for Home Assitant
 
 # Configuration
