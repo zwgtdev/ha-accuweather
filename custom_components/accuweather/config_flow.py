@@ -55,14 +55,12 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
             except InvalidApiKeyError:
                 errors[CONF_API_KEY] = "invalid_api_key"
-
+            else:
                 await self.async_set_unique_id(
                     accuweather.location_key, raise_on_progress=False
                 )
 
-                return self.async_create_entry(
-                    title=user_input[CONF_NAME], data=user_input,
-                )
+                return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
