@@ -60,7 +60,9 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     accuweather.location_key, raise_on_progress=False
                 )
 
-                return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
+                return self.async_create_entry(
+                    title=user_input[CONF_NAME], data=user_input
+                )
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
