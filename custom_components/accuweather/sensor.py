@@ -6,6 +6,7 @@ from homeassistant.const import (
     DEVICE_CLASS_PRESSURE,
     DEVICE_CLASS_TEMPERATURE,
     LENGTH_METERS,
+    SPEED_KILOMETERS_PER_HOUR,
     TEMP_CELSIUS,
     UNIT_PERCENTAGE,
 )
@@ -24,6 +25,12 @@ SENSOR_TYPES = {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
         ATTR_LABEL: "ReelFeel Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+    },
+    "RealFeelTemperatureShade": {
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_LABEL: "RealFeel Temperature Shade",
         ATTR_UNIT: TEMP_CELSIUS,
     },
     "DewPoint": {
@@ -79,6 +86,12 @@ SENSOR_TYPES = {
         ATTR_ICON: "mdi:weather-fog",
         ATTR_LABEL: "Cloud Ceiling",
         ATTR_UNIT: LENGTH_METERS,
+    },
+    "WindGust": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:weather-windy",
+        ATTR_LABEL: "Wind Gust",
+        ATTR_UNIT: SPEED_KILOMETERS_PER_HOUR,
     },
 }
 
@@ -139,6 +152,8 @@ class AccuWeatherSensor(Entity):
             self._state = self.coordinator.data[self.kind]["LocalizedText"].lower()
         elif self.kind == "Precipitation":
             self._state = self.coordinator.data["PrecipitationSummary"][self.kind]["Metric"]["Value"]
+        elif self.kind == "WindGust":
+            self._state = self.coordinator.data[self.kind]["Speed"]["Metric"]["Value"]
         else:
             self._state = self.coordinator.data[self.kind]["Metric"]["Value"]
         return self._state
