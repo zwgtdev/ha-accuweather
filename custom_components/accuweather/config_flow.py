@@ -41,9 +41,8 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
+            websession = async_get_clientsession(self.hass)
             try:
-                websession = async_get_clientsession(self.hass)
-
                 with timeout(10):
                     accuweather = AccuWeather(
                         user_input[CONF_API_KEY],
@@ -52,6 +51,10 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         longitude=user_input[CONF_LONGITUDE],
                     )
                     await accuweather.async_get_location()
+            except (ApiError, ClientConnectorError, asyncio.TimeoutError, ClientError):
+                errors["base"] = "cannot_connect"
+            except InvalidApiKeyError:
+                errors[CONF_API_KEY] = "invalid_api_key"
 
                 await self.async_set_unique_id(
                     accuweather.location_key, raise_on_progress=False
@@ -60,10 +63,6 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=user_input[CONF_NAME], data=user_input,
                 )
-            except (ApiError, ClientConnectorError, asyncio.TimeoutError, ClientError):
-                errors["base"] = "cannot_connect"
-            except InvalidApiKeyError:
-                errors[CONF_API_KEY] = "invalid_api_key"
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
