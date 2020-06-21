@@ -6,18 +6,18 @@
         "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather",
         "data": {
           "name": "Name of the integration",
-          "api_key": "API Key",
+          "api_key": "[%key:common::config_flow::data::api_key%]",
           "latitude": "Latitude",
           "longitude": "Longitude"
         }
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect.",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
       "invalid_api_key": "Your API Key is invalid."
     },
     "abort": {
-      "single_instance_allowed": "Only a single configuration of AccuWeather is allowed."
+      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
     }
   }
 }

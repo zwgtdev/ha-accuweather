@@ -39,8 +39,8 @@ SENSOR_TYPES = {
         ATTR_UNIT: None,
     },
     "PressureTendency": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_PRESSURE,
-        ATTR_ICON: None,
+        ATTR_DEVICE_CLASS: "accuweather__pressure_tendency",
+        ATTR_ICON: "mdi:gauge",
         ATTR_LABEL: "Pressure Tendency",
         ATTR_UNIT: None,
     },
