@@ -28,7 +28,7 @@ SENSOR_TYPES = {
     "RealFeelTemperature": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
-        ATTR_LABEL: "ReelFeel Temperature",
+        ATTR_LABEL: "RealFeel Temperature",
         ATTR_UNIT_METRIC: TEMP_CELSIUS,
         ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
     },
