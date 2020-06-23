@@ -12,6 +12,7 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
     UNIT_PERCENTAGE,
+    UV_INDEX
 )
 from homeassistant.helpers.entity import Entity
 
@@ -50,8 +51,8 @@ SENSOR_TYPES = {
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-sunny",
         ATTR_LABEL: "UV Index",
-        ATTR_UNIT_METRIC: None,
-        ATTR_UNIT_IMPERIAL: None,
+        ATTR_UNIT_METRIC: UV_INDEX,
+        ATTR_UNIT_IMPERIAL: UV_INDEX,
     },
     "PressureTendency": {
         ATTR_DEVICE_CLASS: "accuweather__pressure_tendency",
