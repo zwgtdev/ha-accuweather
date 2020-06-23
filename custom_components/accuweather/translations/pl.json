@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "AccuWeather",
-        "description": "Jeśli potrzebujesz pomocy z konfiguracją, przejdź na stronę: https://github.com/bieniu/ha-accuweather",
+        "description": "Jeśli potrzebujesz pomocy z konfiguracją, przejdź na stronę: https://github.com/bieniu/ha-accuweather \n \n Część sensorów nie jest włączona domyślnie. Możesz je włączyć w rejstrze encji po konfiguracji integracji.",
         "data": {
           "name": "Nazwa integracji",
           "api_key": "Klucz API",

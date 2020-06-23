@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "AccuWeather",
-        "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather",
+        "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather \n\n Some sensors are not enabled by default. You can enable them in the entity registry after the integration configuration.",
         "data": {
           "name": "Name of the integration",
           "api_key": "API Key",

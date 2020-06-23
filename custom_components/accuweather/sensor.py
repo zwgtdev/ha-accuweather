@@ -149,7 +149,7 @@ class AccuWeatherSensor(Entity):
     @property
     def unique_id(self):
         """Return a unique_id for this entity."""
-        return f"{self.coordinator.location_key}-{self.kind}"
+        return f"{self.coordinator.location_key}-{self.kind}".lower()
 
     @property
     def should_poll(self):
@@ -209,7 +209,7 @@ class AccuWeatherSensor(Entity):
     @property
     def entity_registry_enabled_default(self):
         """Return if the entity should be enabled when first added to the entity registry."""
-        return False if self.kind in OPTIONAL_SENSORS else False
+        return False if self.kind in OPTIONAL_SENSORS else True
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""
