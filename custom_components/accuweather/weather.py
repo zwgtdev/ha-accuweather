@@ -2,14 +2,14 @@
 from homeassistant.components.weather import WeatherEntity
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS
 
-from .const import ATTRIBUTION, CONDITION_CLASSES, DOMAIN
+from .const import ATTRIBUTION, COORDINATOR, CONDITION_CLASSES, DOMAIN
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add a AccuWeather weather entity from a config_entry."""
     name = config_entry.data[CONF_NAME]
 
-    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     async_add_entities([AccuWeatherEntity(name, coordinator)], False)
 

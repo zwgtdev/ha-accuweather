@@ -9,9 +9,10 @@ from aiohttp.client_exceptions import ClientConnectorError
 from async_timeout import timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_LATITUDE, CONF_LONGITUDE, CONF_NAME
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN  # pylint:disable=unused-import
+from .const import CONF_FORECAST, DOMAIN  # pylint:disable=unused-import
 
 
 class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -66,4 +67,36 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """AccuWeather options callback."""
+        return AccuWeatherOptionsFlowHandler(config_entry)
+
+
+class AccuWeatherOptionsFlowHandler(config_entries.OptionsFlow):
+    """Config flow options for AccuWeather."""
+
+    def __init__(self, config_entry):
+        """Initialize AccuWeather options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        return await self.async_step_user()
+
+    async def async_step_user(self, user_input=None):
+        """Handle a flow initialized by the user."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(CONF_FORECAST, default=self.config_entry.options.get(CONF_FORECAST, False)): bool
+                }
+            ),
         )

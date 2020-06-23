@@ -19,5 +19,16 @@
     "abort": {
       "single_instance_allowed": "Dozwolona jest tylko jedna konfiguracja AccuWeather."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opcje AccuWeather",
+        "description": "Ze względu na ograniczenia darmowej wersji klucza API AccuWeather po włączeniu pobierania prognozy pogody aktualizacje danych będą wykonywane co 60 minut zamiast co 30 minut.",
+        "data": {
+          "forecast": "Pobieraj prognozę pogody"
+        }
+      }
+    }
   }
 }

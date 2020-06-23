@@ -1,9 +1,9 @@
 """Constants for AccuWeather integration."""
-from datetime import timedelta
-
 ATTRIBUTION = "Data provided by AccuWeather"
-DEFAULT_UPDATE_INTERVAL = timedelta(minutes=30)
+CONF_FORECAST = "forecast"
+COORDINATOR = "coordinator"
 DOMAIN = "accuweather"
+UNDO_UPDATE_LISTENER = "undo_update_listener"
 
 CONDITION_CLASSES = {
     "cloudy": [7, 8, 38],
