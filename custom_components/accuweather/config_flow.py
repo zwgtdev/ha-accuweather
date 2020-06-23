@@ -96,7 +96,10 @@ class AccuWeatherOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_FORECAST, default=self.config_entry.options.get(CONF_FORECAST, False)): bool
+                    vol.Optional(
+                        CONF_FORECAST,
+                        default=self.config_entry.options.get(CONF_FORECAST, False),
+                    ): bool
                 }
             ),
         )

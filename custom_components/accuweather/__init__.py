@@ -74,6 +74,7 @@ async def async_unload_entry(hass, config_entry):
 
     return unload_ok
 
+
 async def update_listener(hass, config_entry):
     """Update listener."""
     await hass.config_entries.async_reload(config_entry.entry_id)
@@ -89,11 +90,11 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         self.accuweather = AccuWeather(api_key, session, location_key=self.location_key)
 
         # forecast download increases the number of requests with one data update
-        update_interval = timedelta(minutes=60) if self.forecast else timedelta(minutes=30)
-
-        super().__init__(
-            hass, _LOGGER, name=DOMAIN, update_interval=update_interval
+        update_interval = (
+            timedelta(minutes=60) if self.forecast else timedelta(minutes=30)
         )
+
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=update_interval)
 
     async def _async_update_data(self):
         """Update data via library."""

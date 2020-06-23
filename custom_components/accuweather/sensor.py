@@ -12,11 +12,11 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
     UNIT_PERCENTAGE,
-    UV_INDEX
+    UV_INDEX,
 )
 from homeassistant.helpers.entity import Entity
 
-from .const import ATTRIBUTION, COORDINATOR, DOMAIN
+from .const import ATTRIBUTION, COORDINATOR, DOMAIN, OPTIONAL_SENSORS
 
 ATTR_ICON = "icon"
 ATTR_LABEL = "label"
@@ -201,8 +201,15 @@ class AccuWeatherSensor(Entity):
         if self.kind == "UVIndex":
             self._attrs["level"] = self.coordinator.data["UVIndexText"]
         if self.kind == "Precipitation":
-            self._attrs["precipitation_type"] = self.coordinator.data["PrecipitationType"]
+            self._attrs["precipitation_type"] = self.coordinator.data[
+                "PrecipitationType"
+            ]
         return self._attrs
+
+    @property
+    def entity_registry_enabled_default(self):
+        """Return if the entity should be enabled when first added to the entity registry."""
+        return False if self.kind in OPTIONAL_SENSORS else False
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""

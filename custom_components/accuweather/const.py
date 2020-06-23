@@ -21,3 +21,10 @@ CONDITION_CLASSES = {
     "windy-variant": [],
     "exceptional": [24, 30, 31],
 }
+OPTIONAL_SENSORS = (
+    "DewPoint",
+    "WetBulbTemperature",
+    "WindChillTemperature",
+    "ApparentTemperature",
+    "RealFeelTemperatureShade",
+)

@@ -2,7 +2,7 @@
 from homeassistant.components.weather import WeatherEntity
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS
 
-from .const import ATTRIBUTION, COORDINATOR, CONDITION_CLASSES, DOMAIN
+from .const import ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -94,6 +94,11 @@ class AccuWeatherEntity(WeatherEntity):
     def visibility(self):
         """Return the visibility."""
         return self.coordinator.data["Visibility"]["Metric"]["Value"]
+
+    @property
+    def entity_registry_enabled_default(self):
+        """Return if the entity should be enabled when first added to the entity registry."""
+        return True
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""
