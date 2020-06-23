@@ -200,7 +200,7 @@ class AccuWeatherSensor(Entity):
         if self.kind == "UVIndex":
             self._attrs["level"] = self.coordinator.data["UVIndexText"]
         if self.kind == "Precipitation":
-            self._attrs["precipation_type"] = self.coordinator.data["PrecipitationType"]
+            self._attrs["precipitation_type"] = self.coordinator.data["PrecipitationType"]
         return self._attrs
 
     async def async_added_to_hass(self):
