@@ -1,7 +1,6 @@
 """Support for the AccuWeather service."""
-from homeassistant.components.weather import (
+from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION,
     ATTR_FORECAST_CONDITION,
-    # ATTR_FORECAST_PRECIPITATION,
     ATTR_FORECAST_TEMP,
     ATTR_FORECAST_TEMP_LOW,
     ATTR_FORECAST_TIME,
@@ -113,20 +112,26 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def forecast(self):
         """Return the forecast array."""
-        data = [
-            {
-                ATTR_FORECAST_TIME: utc_from_timestamp(item["Date"]).isoformat(),
-                ATTR_FORECAST_TEMP: item["Temperature"]["Maximum"],
-                ATTR_FORECAST_TEMP_LOW: item["Temperature"]["Minimum"],
-                ATTR_FORECAST_WIND_SPEED: item["Day"]["Wind"]["Speed"]["Value"],
-                ATTR_FORECAST_WIND_BEARING: item["Day"]["Wind"]["Direction"]["Degrees"],
-                ATTR_FORECAST_CONDITION: [
-                    k for k, v in CONDITION_CLASSES.items() if item["Day"]["Icon"] in v
-                ][0],
-            }
-            for item in self.coordinator.data["DailyForecasts"]
-        ]
-        return data
+        if self.coordinator.forecast:
+            return [
+                {
+                    ATTR_FORECAST_TIME: utc_from_timestamp(
+                        item["EpochDate"]
+                    ).isoformat(),
+                    ATTR_FORECAST_TEMP: item["Temperature"]["Maximum"]["Value"],
+                    ATTR_FORECAST_TEMP_LOW: item["Temperature"]["Minimum"]["Value"],
+                    ATTR_FORECAST_WIND_SPEED: item["Day"]["Wind"]["Speed"]["Value"],
+                    ATTR_FORECAST_WIND_BEARING: item["Day"]["Wind"]["Direction"][
+                        "Degrees"
+                    ],
+                    ATTR_FORECAST_CONDITION: [
+                        k
+                        for k, v in CONDITION_CLASSES.items()
+                        if item["Day"]["Icon"] in v
+                    ][0],
+                }
+                for item in self.coordinator.data["DailyForecasts"]
+            ]
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""

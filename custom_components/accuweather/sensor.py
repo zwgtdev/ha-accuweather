@@ -209,7 +209,7 @@ class AccuWeatherSensor(Entity):
     @property
     def entity_registry_enabled_default(self):
         """Return if the entity should be enabled when first added to the entity registry."""
-        return False if self.kind in OPTIONAL_SENSORS else True
+        return bool(self.kind not in OPTIONAL_SENSORS)
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""

@@ -93,6 +93,7 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         update_interval = (
             timedelta(minutes=60) if self.forecast else timedelta(minutes=30)
         )
+        _LOGGER.debug("Data will be update every %s", update_interval)
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=update_interval)
 
@@ -101,8 +102,15 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             with timeout(10):
                 current = await self.accuweather.async_get_current_conditions()
-                forecast = await self.accuweather.async_get_forecast() if self.forecast else {}
-        except (ApiError, ClientConnectorError, InvalidApiKeyError, RequestsExceededError) as error:
+                forecast = (
+                    await self.accuweather.async_get_forecast() if self.forecast else {}
+                )
+        except (
+            ApiError,
+            ClientConnectorError,
+            InvalidApiKeyError,
+            RequestsExceededError,
+        ) as error:
             raise UpdateFailed(error)
         _LOGGER.debug("Requests remaining: %s", self.accuweather.requests_remaining)
         return {**current, **forecast}
