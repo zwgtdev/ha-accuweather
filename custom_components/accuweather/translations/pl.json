@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "AccuWeather",
-        "description": "Jeśli potrzebujesz pomocy z konfiguracją, przejdź na stronę: https://github.com/bieniu/ha-accuweather \n \n Część sensorów nie jest włączona domyślnie. Możesz je włączyć w rejstrze encji po konfiguracji integracji.",
+        "description": "Jeśli potrzebujesz pomocy z konfiguracją, przejdź na stronę: https://github.com/bieniu/ha-accuweather\n\nCzęść sensorów nie jest włączona domyślnie. Możesz je włączyć w rejstrze encji po konfiguracji integracji.\nPrognoza pogody nie jest domyślnie włączona. Możesz ją włączyć w opcjach integracji.",
         "data": {
           "name": "Nazwa integracji",
           "api_key": "Klucz API",
@@ -25,9 +25,9 @@
     "step": {
       "user": {
         "title": "Opcje AccuWeather",
-        "description": "Ze względu na ograniczenia darmowej wersji klucza API AccuWeather po włączeniu pobierania prognozy pogody aktualizacje danych będą wykonywane co 60 minut zamiast co 30 minut.",
+        "description": "Ze względu na ograniczenia darmowej wersji klucza API AccuWeather po włączeniu prognozy pogody aktualizacje danych będą wykonywane co 60 minut zamiast co 30 minut.",
         "data": {
-          "forecast": "Pobieraj prognozę pogody"
+          "forecast": "Prognoza pogody"
         }
       }
     }

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "AccuWeather",
-        "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather \n\n Some sensors are not enabled by default. You can enable them in the entity registry after the integration configuration.",
+        "description": "If you need help with the configuration have a look here: https://github.com/bieniu/ha-accuweather\n\nSome sensors are not enabled by default. You can enable them in the entity registry after the integration configuration.\nWeather forecast is not enabled by default. You can enable it in the integration options.",
         "data": {
           "name": "Name of the integration",
           "api_key": "[%key:common::config_flow::data::api_key%]",
@@ -25,9 +25,9 @@
     "step": {
       "user": {
         "title": "AccuWeather Options",
-        "description": "Due to the limitations of the free version of the AccuWeather API key, when you enable weather forecast get, data updates will be performed every 60 minutes instead of every 30 minutes.",
+        "description": "Due to the limitations of the free version of the AccuWeather API key, when you enable weather forecast, data updates will be performed every 60 minutes instead of every 30 minutes.",
         "data": {
-          "forecast": "Get weather forecast"
+          "forecast": "Weather forecast"
         }
       }
     }
