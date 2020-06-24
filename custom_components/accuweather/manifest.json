@@ -3,7 +3,7 @@
   "name": "AccuWeather",
   "documentation": "https://github.com/bieniu/ha-accuweather",
   "requirements": [
-    "git+https://github.com/bieniu/accuweather.git@master#accuweather==0.0.4"
+    "git+https://github.com/bieniu/accuweather.git@master#accuweather==0.0.5"
   ],
   "codeowners": ["@bieniu"],
   "config_flow": true

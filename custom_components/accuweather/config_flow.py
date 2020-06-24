@@ -3,7 +3,7 @@ import asyncio
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from accuweather import AccuWeather, ApiError, InvalidApiKeyError
+from accuweather import AccuWeather, ApiError, InvalidApiKeyError, RequestsExceededError
 from aiohttp import ClientError
 from aiohttp.client_exceptions import ClientConnectorError
 from async_timeout import timeout
@@ -56,6 +56,8 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
             except InvalidApiKeyError:
                 errors[CONF_API_KEY] = "invalid_api_key"
+            except RequestsExceededError:
+                errors[CONF_API_KEY] = "requests_exceeded"
             else:
                 await self.async_set_unique_id(
                     accuweather.location_key, raise_on_progress=False

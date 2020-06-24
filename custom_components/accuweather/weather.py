@@ -1,6 +1,16 @@
 """Support for the AccuWeather service."""
-from homeassistant.components.weather import WeatherEntity
+from homeassistant.components.weather import (
+    ATTR_FORECAST_CONDITION,
+    # ATTR_FORECAST_PRECIPITATION,
+    ATTR_FORECAST_TEMP,
+    ATTR_FORECAST_TEMP_LOW,
+    ATTR_FORECAST_TIME,
+    ATTR_FORECAST_WIND_BEARING,
+    ATTR_FORECAST_WIND_SPEED,
+    WeatherEntity,
+)
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS
+from homeassistant.util.dt import utc_from_timestamp
 
 from .const import ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
 
@@ -99,6 +109,24 @@ class AccuWeatherEntity(WeatherEntity):
     def entity_registry_enabled_default(self):
         """Return if the entity should be enabled when first added to the entity registry."""
         return True
+
+    @property
+    def forecast(self):
+        """Return the forecast array."""
+        data = [
+            {
+                ATTR_FORECAST_TIME: utc_from_timestamp(item["Date"]).isoformat(),
+                ATTR_FORECAST_TEMP: item["Temperature"]["Maximum"],
+                ATTR_FORECAST_TEMP_LOW: item["Temperature"]["Minimum"],
+                ATTR_FORECAST_WIND_SPEED: item["Day"]["Wind"]["Speed"]["Value"],
+                ATTR_FORECAST_WIND_BEARING: item["Day"]["Wind"]["Direction"]["Degrees"],
+                ATTR_FORECAST_CONDITION: [
+                    k for k, v in CONDITION_CLASSES.items() if item["Day"]["Icon"] in v
+                ][0],
+            }
+            for item in self.coordinator.data["DailyForecasts"]
+        ]
+        return data
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""
