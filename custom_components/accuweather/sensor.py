@@ -16,12 +16,17 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import Entity
 
-from .const import ATTRIBUTION, COORDINATOR, DOMAIN, OPTIONAL_SENSORS
+from .const import (
+    ATTR_UNIT_IMPERIAL,
+    ATTR_UNIT_METRIC,
+    ATTRIBUTION,
+    COORDINATOR,
+    DOMAIN,
+    OPTIONAL_SENSORS,
+)
 
 ATTR_ICON = "icon"
 ATTR_LABEL = "label"
-ATTR_UNIT_METRIC = "Metric"
-ATTR_UNIT_IMPERIAL = "Imperial"
 
 LENGTH_MILIMETERS = "mm"
 
@@ -117,7 +122,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add a AccuWeather weather entities from a config_entry."""
     name = config_entry.data[CONF_NAME]
 
-    units = "Metric" if hass.config.units.is_metric else "Imperial"
+    units = ATTR_UNIT_METRIC if hass.config.units.is_metric else ATTR_UNIT_IMPERIAL
 
     coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 

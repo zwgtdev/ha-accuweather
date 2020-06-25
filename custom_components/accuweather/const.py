@@ -1,4 +1,6 @@
 """Constants for AccuWeather integration."""
+ATTR_UNIT_IMPERIAL = "Imperial"
+ATTR_UNIT_METRIC = "Metric"
 ATTRIBUTION = "Data provided by AccuWeather"
 CONF_FORECAST = "forecast"
 COORDINATOR = "coordinator"

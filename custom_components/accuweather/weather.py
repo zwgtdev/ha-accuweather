@@ -1,6 +1,9 @@
 """Support for the AccuWeather service."""
-from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION,
+from statistics import mean
+
+from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION_PROBABILITY,  # required HA 0.112
     ATTR_FORECAST_CONDITION,
+    ATTR_FORECAST_PRECIPITATION,
     ATTR_FORECAST_TEMP,
     ATTR_FORECAST_TEMP_LOW,
     ATTR_FORECAST_TIME,
@@ -11,7 +14,7 @@ from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION,
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS
 from homeassistant.util.dt import utc_from_timestamp
 
-from .const import ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
+from .const import ATTR_UNIT_METRIC, ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -72,7 +75,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def temperature(self):
         """Return the temperature."""
-        return self.coordinator.data["Temperature"]["Metric"]["Value"]
+        return self.coordinator.data["Temperature"][ATTR_UNIT_METRIC]["Value"]
 
     @property
     def temperature_unit(self):
@@ -82,7 +85,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def pressure(self):
         """Return the pressure."""
-        return self.coordinator.data["Pressure"]["Metric"]["Value"]
+        return self.coordinator.data["Pressure"][ATTR_UNIT_METRIC]["Value"]
 
     @property
     def humidity(self):
@@ -92,7 +95,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def wind_speed(self):
         """Return the wind speed."""
-        return self.coordinator.data["Wind"]["Speed"]["Metric"]["Value"]
+        return self.coordinator.data["Wind"]["Speed"][ATTR_UNIT_METRIC]["Value"]
 
     @property
     def wind_bearing(self):
@@ -102,24 +105,30 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def visibility(self):
         """Return the visibility."""
-        return self.coordinator.data["Visibility"]["Metric"]["Value"]
-
-    @property
-    def entity_registry_enabled_default(self):
-        """Return if the entity should be enabled when first added to the entity registry."""
-        return True
+        return self.coordinator.data["Visibility"][ATTR_UNIT_METRIC]["Value"]
 
     @property
     def forecast(self):
         """Return the forecast array."""
         if self.coordinator.forecast:
-            return [
+            # remap keys from library to keys understood by the weather component
+            forecast = [
                 {
                     ATTR_FORECAST_TIME: utc_from_timestamp(
                         item["EpochDate"]
                     ).isoformat(),
                     ATTR_FORECAST_TEMP: item["Temperature"]["Maximum"]["Value"],
                     ATTR_FORECAST_TEMP_LOW: item["Temperature"]["Minimum"]["Value"],
+                    ATTR_FORECAST_PRECIPITATION: self._calc_precipitation(
+                        item["Day"], item["Night"]
+                    ),
+                    # required HA 0.112
+                    # ATTR_FORECAST_PRECIPITATION_PROBABILITY: mean(
+                    #     [
+                    #         item["Day"]["PrecipitationProbability"],
+                    #         item["Night"]["PrecipitationProbability"],
+                    #     ]
+                    # ),
                     ATTR_FORECAST_WIND_SPEED: item["Day"]["Wind"]["Speed"]["Value"],
                     ATTR_FORECAST_WIND_BEARING: item["Day"]["Wind"]["Direction"][
                         "Degrees"
@@ -132,6 +141,12 @@ class AccuWeatherEntity(WeatherEntity):
                 }
                 for item in self.coordinator.data["DailyForecasts"]
             ]
+            return forecast
+
+    @property
+    def entity_registry_enabled_default(self):
+        """Return if the entity should be enabled when first added to the entity registry."""
+        return True
 
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""
@@ -142,3 +157,12 @@ class AccuWeatherEntity(WeatherEntity):
     async def async_update(self):
         """Update AccuWeather entity."""
         await self.coordinator.async_request_refresh()
+
+    @staticmethod
+    def _calc_precipitation(day: dict, night: dict) -> float:
+        """Return sum of the precipitation."""
+        precip_sum = 0
+        precip_types = ["Rain", "Snow", "Ice"]
+        for precip in precip_types:
+            precip_sum = sum([precip_sum, day[precip]["Value"], night[precip]["Value"]])
+        return precip_sum
