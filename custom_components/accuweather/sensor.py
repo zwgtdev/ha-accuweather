@@ -30,6 +30,25 @@ ATTR_LABEL = "label"
 
 LENGTH_MILIMETERS = "mm"
 
+FORECAST_DAYS = [0, 1, 2, 3, 4]
+
+FORECAST_SENSOR_TYPES = {
+    "RealFeelTemperatureShade": {
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_LABEL: "RealFeel Temperature Shade",
+        ATTR_UNIT_METRIC: TEMP_CELSIUS,
+        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
+    },
+    "RealFeelTemperature": {
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_LABEL: "Forecast RealFeel Temperature",
+        ATTR_UNIT_METRIC: TEMP_CELSIUS,
+        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
+    },
+}
+
 SENSOR_TYPES = {
     "RealFeelTemperature": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
@@ -130,13 +149,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for sensor in SENSOR_TYPES:
         sensors.append(AccuWeatherSensor(name, sensor, coordinator, units))
 
+    if coordinator.forecast:
+        for sensor in FORECAST_SENSOR_TYPES:
+            for day in FORECAST_DAYS:
+                sensors.append(
+                    AccuWeatherSensor(
+                        name, sensor, coordinator, units, forecast_day=day
+                    )
+                )
+
     async_add_entities(sensors, False)
 
 
 class AccuWeatherSensor(Entity):
     """Define an AccuWeather entity."""
 
-    def __init__(self, name, kind, coordinator, units):
+    def __init__(self, name, kind, coordinator, units, forecast_day=None):
         """Initialize."""
         self._name = name
         self.kind = kind
@@ -145,15 +173,20 @@ class AccuWeatherSensor(Entity):
         self._state = None
         self._attrs = {ATTR_ATTRIBUTION: ATTRIBUTION}
         self.units = units
+        self.forecast_day = forecast_day
 
     @property
     def name(self):
         """Return the name."""
+        if self.forecast_day is not None:
+            return f"{self._name} {SENSOR_TYPES[self.kind][ATTR_LABEL]} {self.forecast_day}d"
         return f"{self._name} {SENSOR_TYPES[self.kind][ATTR_LABEL]}"
 
     @property
     def unique_id(self):
         """Return a unique_id for this entity."""
+        if self.forecast_day is not None:
+            return f"{self.coordinator.location_key}-{self.kind}-{self.forecast_day}".lower()
         return f"{self.coordinator.location_key}-{self.kind}".lower()
 
     @property
@@ -169,6 +202,10 @@ class AccuWeatherSensor(Entity):
     @property
     def state(self):
         """Return the state."""
+        if self.forecast_day:
+            return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                self.kind
+            ]["Maximum"]["Value"]
         if self.kind in ["UVIndex", "CloudCover"]:
             self._state = self.coordinator.data[self.kind]
         elif self.kind == "Ceiling":
