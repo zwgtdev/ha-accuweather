@@ -25,6 +25,8 @@ from .const import (
     OPTIONAL_SENSORS,
 )
 
+PARALLEL_UPDATES = 1
+
 ATTR_ICON = "icon"
 ATTR_LABEL = "label"
 

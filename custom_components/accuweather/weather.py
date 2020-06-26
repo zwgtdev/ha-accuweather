@@ -16,6 +16,7 @@ from homeassistant.util.dt import utc_from_timestamp
 
 from .const import ATTR_UNIT_METRIC, ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
 
+PARALLEL_UPDATES = 1
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add a AccuWeather weather entity from a config_entry."""
