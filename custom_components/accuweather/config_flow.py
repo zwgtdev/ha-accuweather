@@ -36,6 +36,8 @@ class AccuWeatherFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             }
         )
 
+        # under the terms of use of the API, one user can use one free API key, due to
+        # the small number of requests allowed, we only allow one integration instance
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
