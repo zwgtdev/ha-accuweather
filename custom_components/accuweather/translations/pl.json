@@ -25,7 +25,7 @@
     "step": {
       "user": {
         "title": "Opcje AccuWeather",
-        "description": "Ze względu na ograniczenia darmowej wersji klucza API AccuWeather po włączeniu prognozy pogody aktualizacje danych będą wykonywane co 60 minut zamiast co 30 minut.",
+        "description": "Ze względu na ograniczenia darmowej wersji klucza API AccuWeather po włączeniu prognozy pogody aktualizacje danych będą wykonywane co 64 minut zamiast co 32 minut.",
         "data": {
           "forecast": "Prognoza pogody"
         }

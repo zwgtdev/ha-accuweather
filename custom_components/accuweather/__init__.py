@@ -89,9 +89,11 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         self.forecast = forecast
         self.accuweather = AccuWeather(api_key, session, location_key=self.location_key)
 
-        # forecast download increases the number of requests with one data update
+        # enable the forecast download increases the number of requests for one data
+        # update, we use 32 minutes for current condition only and 64 minutes for
+        # current condition and forecast to not exceed allowed number of requests
         update_interval = (
-            timedelta(minutes=60) if self.forecast else timedelta(minutes=30)
+            timedelta(minutes=64) if self.forecast else timedelta(minutes=32)
         )
         _LOGGER.debug("Data will be update every %s", update_interval)
 
