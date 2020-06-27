@@ -87,12 +87,13 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
         """Initialize."""
         self.location_key = location_key
         self.forecast = forecast
+        self.is_metric = hass.config.units.is_metric
         self.accuweather = AccuWeather(api_key, session, location_key=self.location_key)
 
         # Enabling the forecast download increases the number of requests per data
         # update, we use 32 minutes for current condition only and 64 minutes for
-        # current condition and forecast to not exceed allowed number of requests.
-        # We have 50 requests allowed per day, so we use 45 and leave 5 as
+        # current condition and forecast as update interval to not exceed allowed number
+        # of requests. We have 50 requests allowed per day, so we use 45 and leave 5 as
         # a reserve for restarting HA.
         update_interval = (
             timedelta(minutes=64) if self.forecast else timedelta(minutes=32)
@@ -107,7 +108,9 @@ class AccuWeatherDataUpdateCoordinator(DataUpdateCoordinator):
             with timeout(10):
                 current = await self.accuweather.async_get_current_conditions()
                 forecast = (
-                    await self.accuweather.async_get_forecast() if self.forecast else {}
+                    await self.accuweather.async_get_forecast(metric=self.is_metric)
+                    if self.forecast
+                    else {}
                 )
         except (
             ApiError,

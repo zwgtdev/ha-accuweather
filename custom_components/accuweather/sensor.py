@@ -143,21 +143,17 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Add a AccuWeather weather entities from a config_entry."""
     name = config_entry.data[CONF_NAME]
 
-    units = ATTR_UNIT_METRIC if hass.config.units.is_metric else ATTR_UNIT_IMPERIAL
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     sensors = []
     for sensor in SENSOR_TYPES:
-        sensors.append(AccuWeatherSensor(name, sensor, coordinator, units))
+        sensors.append(AccuWeatherSensor(name, sensor, coordinator))
 
     if coordinator.forecast:
         for sensor in FORECAST_SENSOR_TYPES:
             for day in FORECAST_DAYS:
                 sensors.append(
-                    AccuWeatherSensor(
-                        name, sensor, coordinator, units, forecast_day=day
-                    )
+                    AccuWeatherSensor(name, sensor, coordinator, forecast_day=day)
                 )
 
     async_add_entities(sensors, False)
@@ -166,7 +162,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class AccuWeatherSensor(Entity):
     """Define an AccuWeather entity."""
 
-    def __init__(self, name, kind, coordinator, units, forecast_day=None):
+    def __init__(self, name, kind, coordinator, forecast_day=None):
         """Initialize."""
         self._name = name
         self.kind = kind
@@ -174,7 +170,9 @@ class AccuWeatherSensor(Entity):
         self._device_class = None
         self._state = None
         self._attrs = {ATTR_ATTRIBUTION: ATTRIBUTION}
-        self.units = units
+        self.units = (
+            ATTR_UNIT_METRIC if self.coordinator.is_metric else ATTR_UNIT_IMPERIAL
+        )
         self.forecast_day = forecast_day
 
     @property

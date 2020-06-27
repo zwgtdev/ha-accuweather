@@ -1,5 +1,5 @@
 """Support for the AccuWeather service."""
-from statistics import mean
+# from statistics import mean # required HA 0.112
 
 from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION_PROBABILITY,  # required HA 0.112
     ATTR_FORECAST_CONDITION,
@@ -11,7 +11,7 @@ from homeassistant.components.weather import (  # ATTR_FORECAST_PRECIPITATION_PR
     ATTR_FORECAST_WIND_SPEED,
     WeatherEntity,
 )
-from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS
+from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.util.dt import utc_from_timestamp
 
 from .const import ATTR_UNIT_METRIC, ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
@@ -82,7 +82,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def temperature_unit(self):
         """Return the unit of measurement."""
-        return TEMP_CELSIUS
+        return TEMP_CELSIUS if self.coordinator.is_metric else TEMP_FAHRENHEIT
 
     @property
     def pressure(self):
@@ -144,6 +144,7 @@ class AccuWeatherEntity(WeatherEntity):
                 for item in self.coordinator.data["DailyForecasts"]
             ]
             return forecast
+        return None
 
     @property
     def entity_registry_enabled_default(self):
