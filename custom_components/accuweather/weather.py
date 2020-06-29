@@ -125,12 +125,12 @@ class AccuWeatherEntity(WeatherEntity):
                         item["Day"], item["Night"]
                     ),
                     # required HA 0.112
-                    # ATTR_FORECAST_PRECIPITATION_PROBABILITY: mean(
+                    # ATTR_FORECAST_PRECIPITATION_PROBABILITY: round(mean(
                     #     [
                     #         item["Day"]["PrecipitationProbability"],
                     #         item["Night"]["PrecipitationProbability"],
                     #     ]
-                    # ),
+                    # )),
                     ATTR_FORECAST_WIND_SPEED: item["Day"]["Wind"]["Speed"]["Value"],
                     ATTR_FORECAST_WIND_BEARING: item["Day"]["Wind"]["Direction"][
                         "Degrees"
@@ -167,5 +167,5 @@ class AccuWeatherEntity(WeatherEntity):
         precip_sum = 0
         precip_types = ["Rain", "Snow", "Ice"]
         for precip in precip_types:
-            precip_sum = sum([precip_sum, day[precip]["Value"], night[precip]["Value"]])
+            precip_sum = round(sum([precip_sum, day[precip]["Value"], night[precip]["Value"]]), 1)
         return precip_sum
