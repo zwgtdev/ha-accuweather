@@ -1,4 +1,6 @@
 """Support for the AccuWeather service."""
+import logging
+
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
     ATTR_DEVICE_CLASS,
@@ -25,6 +27,8 @@ from .const import (
     OPTIONAL_SENSORS,
 )
 
+_LOGGER = logging.getLogger(__name__)
+
 PARALLEL_UPDATES = 1
 
 ATTR_ICON = "icon"
@@ -35,19 +39,61 @@ LENGTH_MILIMETERS = "mm"
 FORECAST_DAYS = [0, 1, 2, 3, 4]
 
 FORECAST_SENSOR_TYPES = {
-    "RealFeelTemperatureShade": {
+    "RealFeelTemperatureShadeMax": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Shade",
+        ATTR_LABEL: "RealFeel Temperature Shade Max",
         ATTR_UNIT_METRIC: TEMP_CELSIUS,
         ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
     },
-    "RealFeelTemperature": {
+    "RealFeelTemperatureShadeMin": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
-        ATTR_LABEL: "Forecast RealFeel Temperature",
+        ATTR_LABEL: "RealFeel Temperature Shade Min",
         ATTR_UNIT_METRIC: TEMP_CELSIUS,
         ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
+    },
+    "RealFeelTemperatureMax": {
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_LABEL: "RealFeel Temperature Max",
+        ATTR_UNIT_METRIC: TEMP_CELSIUS,
+        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
+    },
+    "RealFeelTemperatureMin": {
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_LABEL: "RealFeel Temperature Min",
+        ATTR_UNIT_METRIC: TEMP_CELSIUS,
+        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
+    },
+    "PrecipitationProbabilityDay": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "weather-snowy-rainy",
+        ATTR_LABEL: "Precipitation Probability Day",
+        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
+        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
+    },
+    "PrecipitationProbabilityNight": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "weather-snowy-rainy",
+        ATTR_LABEL: "Precipitation Probability Night",
+        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
+        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
+    },
+    "ThunderstormProbabilityDay": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "weather-lightning",
+        ATTR_LABEL: "Thunderstorm Probability Day",
+        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
+        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
+    },
+    "ThunderstormProbabilityNight": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "weather-lightning",
+        ATTR_LABEL: "Thunderstorm Probability Night",
+        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
+        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
     },
 }
 
@@ -179,7 +225,7 @@ class AccuWeatherSensor(Entity):
     def name(self):
         """Return the name."""
         if self.forecast_day is not None:
-            return f"{self._name} {SENSOR_TYPES[self.kind][ATTR_LABEL]} {self.forecast_day}d"
+            return f"{self._name} {FORECAST_SENSOR_TYPES[self.kind][ATTR_LABEL]} {self.forecast_day}d"
         return f"{self._name} {SENSOR_TYPES[self.kind][ATTR_LABEL]}"
 
     @property
@@ -202,10 +248,12 @@ class AccuWeatherSensor(Entity):
     @property
     def state(self):
         """Return the state."""
-        if self.forecast_day:
-            return self.coordinator.data["DailyForecasts"][self.forecast_day][
-                self.kind
-            ]["Maximum"]["Value"]
+        if self.forecast_day is not None:
+            if self.kind in ["RealFeelTemperatureMax", "RealFeelTemperatureMin", "RealFeelTemperatureShadeMax", "RealFeelTemperatureShadeMin"]:
+                self._state = self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]["Value"]
+            elif self.kind in ["PrecipitationProbabilityDay", "PrecipitationProbabilityNight", "ThunderstormProbabilityDay", "ThunderstormProbabilityNight"]:
+                self._state = self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]
+            return self._state
         if self.kind in ["UVIndex", "CloudCover"]:
             self._state = self.coordinator.data[self.kind]
         elif self.kind == "Ceiling":
@@ -225,16 +273,22 @@ class AccuWeatherSensor(Entity):
     @property
     def icon(self):
         """Return the icon."""
+        if self.forecast_day is not None:
+            return FORECAST_SENSOR_TYPES[self.kind][ATTR_ICON]
         return SENSOR_TYPES[self.kind][ATTR_ICON]
 
     @property
     def device_class(self):
         """Return the device_class."""
+        if self.forecast_day is not None:
+            return FORECAST_SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS]
         return SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS]
 
     @property
     def unit_of_measurement(self):
         """Return the unit the value is expressed in."""
+        if self.forecast_day is not None:
+            return FORECAST_SENSOR_TYPES[self.kind][self.units]
         return SENSOR_TYPES[self.kind][self.units]
 
     @property
