@@ -13,6 +13,7 @@ from homeassistant.const import (
     SPEED_MILES_PER_HOUR,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
+    TIME_HOURS,
     UNIT_PERCENTAGE,
     UV_INDEX,
 )
@@ -94,6 +95,20 @@ FORECAST_SENSOR_TYPES = {
         ATTR_LABEL: "Thunderstorm Probability Night",
         ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
         ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
+    },
+    "HoursOfSun": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:weather-lightning",
+        ATTR_LABEL: "Hours Of Sun",
+        ATTR_UNIT_METRIC: TIME_HOURS,
+        ATTR_UNIT_IMPERIAL: TIME_HOURS,
+    },
+    "UVIndex": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:weather-sunny",
+        ATTR_LABEL: "UV Index",
+        ATTR_UNIT_METRIC: UV_INDEX,
+        ATTR_UNIT_IMPERIAL: UV_INDEX,
     },
 }
 
@@ -214,7 +229,6 @@ class AccuWeatherSensor(Entity):
         self.kind = kind
         self.coordinator = coordinator
         self._device_class = None
-        self._state = None
         self._attrs = {ATTR_ATTRIBUTION: ATTRIBUTION}
         self.units = (
             ATTR_UNIT_METRIC if self.coordinator.is_metric else ATTR_UNIT_IMPERIAL
@@ -249,26 +263,30 @@ class AccuWeatherSensor(Entity):
     def state(self):
         """Return the state."""
         if self.forecast_day is not None:
-            if self.kind in ["RealFeelTemperatureMax", "RealFeelTemperatureMin", "RealFeelTemperatureShadeMax", "RealFeelTemperatureShadeMin"]:
-                self._state = self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]["Value"]
-            elif self.kind in ["PrecipitationProbabilityDay", "PrecipitationProbabilityNight", "ThunderstormProbabilityDay", "ThunderstormProbabilityNight"]:
-                self._state = self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]
-            return self._state
+            if self.kind in [
+                "RealFeelTemperatureMax",
+                "RealFeelTemperatureMin",
+                "RealFeelTemperatureShadeMax",
+                "RealFeelTemperatureShadeMin",
+                "UVIndex",
+            ]:
+                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                    self.kind
+                ]["Value"]
+            return self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]
         if self.kind in ["UVIndex", "CloudCover"]:
-            self._state = self.coordinator.data[self.kind]
-        elif self.kind == "Ceiling":
-            self._state = round(self.coordinator.data[self.kind][self.units]["Value"])
-        elif self.kind == "PressureTendency":
-            self._state = self.coordinator.data[self.kind]["LocalizedText"].lower()
-        elif self.kind == "Precipitation":
-            self._state = self.coordinator.data["PrecipitationSummary"][self.kind][
-                self.units
-            ]["Value"]
-        elif self.kind == "WindGust":
-            self._state = self.coordinator.data[self.kind]["Speed"][self.units]["Value"]
-        else:
-            self._state = self.coordinator.data[self.kind][self.units]["Value"]
-        return self._state
+            return self.coordinator.data[self.kind]
+        if self.kind == "Ceiling":
+            return round(self.coordinator.data[self.kind][self.units]["Value"])
+        if self.kind == "PressureTendency":
+            return self.coordinator.data[self.kind]["LocalizedText"].lower()
+        if self.kind == "Precipitation":
+            return self.coordinator.data["PrecipitationSummary"][self.kind][self.units][
+                "Value"
+            ]
+        if self.kind == "WindGust":
+            return self.coordinator.data[self.kind]["Speed"][self.units]["Value"]
+        return self.coordinator.data[self.kind][self.units]["Value"]
 
     @property
     def icon(self):
@@ -294,6 +312,44 @@ class AccuWeatherSensor(Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
+        if self.forecast_day is not None:
+            if self.kind == "PrecipitationProbabilityDay":
+                self._attrs["type"] = self.coordinator.data["DailyForecasts"][
+                    self.forecast_day
+                ].get("PrecipitationTypeDay")
+                self._attrs["intensity"] = self.coordinator.data["DailyForecasts"][
+                    self.forecast_day
+                ].get("PrecipitationIntensityDay")
+                self._attrs["rain_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["RainProbabilityDay"]
+                self._attrs["snow_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["SnowProbabilityDay"]
+                self._attrs["ice_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["IceProbabilityDay"]
+            if self.kind == "PrecipitationProbabilityNight":
+                self._attrs["type"] = self.coordinator.data["DailyForecasts"][
+                    self.forecast_day
+                ].get("PrecipitationTypeNight")
+                self._attrs["intensity"] = self.coordinator.data["DailyForecasts"][
+                    self.forecast_day
+                ].get("PrecipitationIntensityNight")
+                self._attrs["rain_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["RainProbabilityNight"]
+                self._attrs["snow_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["SnowProbabilityNight"]
+                self._attrs["ice_probability"] = self.coordinator.data[
+                    "DailyForecasts"
+                ][self.forecast_day]["IceProbabilityNight"]
+            if self.kind == "UVIndex":
+                self._attrs["level"] = self.coordinator.data["DailyForecasts"][
+                    self.forecast_day
+                ][self.kind]["Category"]
+            return self._attrs
         if self.kind == "UVIndex":
             self._attrs["level"] = self.coordinator.data["UVIndexText"]
         if self.kind == "Precipitation":

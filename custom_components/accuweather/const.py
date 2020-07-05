@@ -29,4 +29,6 @@ OPTIONAL_SENSORS = (
     "WindChillTemperature",
     "ApparentTemperature",
     "RealFeelTemperatureShade",
+    "RealFeelTemperatureShadeDay",
+    "RealFeelTemperatureShadeNight",
 )
