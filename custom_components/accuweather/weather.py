@@ -15,7 +15,14 @@ from homeassistant.components.weather import (
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.util.dt import utc_from_timestamp
 
-from .const import ATTR_UNIT_METRIC, ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
+from .const import (
+    ATTR_FORECAST,
+    ATTR_UNIT_METRIC,
+    ATTRIBUTION,
+    CONDITION_CLASSES,
+    COORDINATOR,
+    DOMAIN,
+)
 
 PARALLEL_UPDATES = 1
 
@@ -137,7 +144,7 @@ class AccuWeatherEntity(WeatherEntity):
                         k for k, v in CONDITION_CLASSES.items() if item["IconDay"] in v
                     ][0],
                 }
-                for item in self.coordinator.data["DailyForecasts"]
+                for item in self.coordinator.data[ATTR_FORECAST]
             ]
             return forecast
         return None

@@ -16,6 +16,7 @@ from homeassistant.const import (
 
 ATTRIBUTION = "Data provided by AccuWeather"
 ATTR_ICON = "icon"
+ATTR_FORECAST = "forecast"
 ATTR_LABEL = "label"
 ATTR_UNIT_IMPERIAL = "Imperial"
 ATTR_UNIT_METRIC = "Metric"

@@ -8,6 +8,7 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import Entity
 
 from .const import (
+    ATTR_FORECAST,
     ATTR_ICON,
     ATTR_LABEL,
     ATTR_UNIT_IMPERIAL,
@@ -91,26 +92,24 @@ class AccuWeatherSensor(Entity):
                 FORECAST_SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS]
                 == DEVICE_CLASS_TEMPERATURE
             ):
-                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                return self.coordinator.data[ATTR_FORECAST][self.forecast_day][
                     self.kind
                 ]["Value"]
             if self.kind in ["WindGustDay", "WindGustNight"]:
-                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                return self.coordinator.data[ATTR_FORECAST][self.forecast_day][
                     self.kind
                 ]["Speed"]["Value"]
             if self.kind == "UVIndex":
-                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                return self.coordinator.data[ATTR_FORECAST][self.forecast_day][
                     self.kind
                 ]["Value"]
-            return self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]
+            return self.coordinator.data[ATTR_FORECAST][self.forecast_day][self.kind]
         if self.kind == "Ceiling":
             return round(self.coordinator.data[self.kind][self.units]["Value"])
         if self.kind == "PressureTendency":
             return self.coordinator.data[self.kind]["LocalizedText"].lower()
-
         if SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS] == DEVICE_CLASS_TEMPERATURE:
             return self.coordinator.data[self.kind][self.units]["Value"]
-
         if self.kind == "Precipitation":
             return self.coordinator.data["PrecipitationSummary"][self.kind][self.units][
                 "Value"
@@ -145,15 +144,15 @@ class AccuWeatherSensor(Entity):
         """Return the state attributes."""
         if self.forecast_day is not None:
             if self.kind == "WindGustDay":
-                self._attrs["direction"] = self.coordinator.data["DailyForecasts"][
+                self._attrs["direction"] = self.coordinator.data[ATTR_FORECAST][
                     self.forecast_day
                 ][self.kind]["Direction"]["English"]
             elif self.kind == "WindGustNight":
-                self._attrs["direction"] = self.coordinator.data["DailyForecasts"][
+                self._attrs["direction"] = self.coordinator.data[ATTR_FORECAST][
                     self.forecast_day
                 ][self.kind]["Direction"]["English"]
             elif self.kind == "UVIndex":
-                self._attrs["level"] = self.coordinator.data["DailyForecasts"][
+                self._attrs["level"] = self.coordinator.data[ATTR_FORECAST][
                     self.forecast_day
                 ][self.kind]["Category"]
             return self._attrs
