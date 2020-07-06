@@ -1,203 +1,27 @@
 """Support for the AccuWeather service."""
-import logging
-
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
     ATTR_DEVICE_CLASS,
     CONF_NAME,
     DEVICE_CLASS_TEMPERATURE,
-    LENGTH_FEET,
-    LENGTH_INCHES,
-    LENGTH_METERS,
-    SPEED_KILOMETERS_PER_HOUR,
-    SPEED_MILES_PER_HOUR,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
-    TIME_HOURS,
-    UNIT_PERCENTAGE,
-    UV_INDEX,
 )
 from homeassistant.helpers.entity import Entity
 
 from .const import (
+    ATTR_ICON,
+    ATTR_LABEL,
     ATTR_UNIT_IMPERIAL,
     ATTR_UNIT_METRIC,
     ATTRIBUTION,
     COORDINATOR,
     DOMAIN,
+    FORECAST_DAYS,
+    FORECAST_SENSOR_TYPES,
     OPTIONAL_SENSORS,
+    SENSOR_TYPES,
 )
 
-_LOGGER = logging.getLogger(__name__)
-
 PARALLEL_UPDATES = 1
-
-ATTR_ICON = "icon"
-ATTR_LABEL = "label"
-
-LENGTH_MILIMETERS = "mm"
-
-FORECAST_DAYS = [0, 1, 2, 3, 4]
-
-FORECAST_SENSOR_TYPES = {
-    "RealFeelTemperatureShadeMax": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Shade Max",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "RealFeelTemperatureShadeMin": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Shade Min",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "RealFeelTemperatureMax": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Max",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "RealFeelTemperatureMin": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Min",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "PrecipitationProbabilityDay": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "weather-snowy-rainy",
-        ATTR_LABEL: "Precipitation Probability Day",
-        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
-        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
-    },
-    "PrecipitationProbabilityNight": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "weather-snowy-rainy",
-        ATTR_LABEL: "Precipitation Probability Night",
-        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
-        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
-    },
-    "ThunderstormProbabilityDay": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "weather-lightning",
-        ATTR_LABEL: "Thunderstorm Probability Day",
-        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
-        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
-    },
-    "ThunderstormProbabilityNight": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "weather-lightning",
-        ATTR_LABEL: "Thunderstorm Probability Night",
-        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
-        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
-    },
-    "HoursOfSun": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-lightning",
-        ATTR_LABEL: "Hours Of Sun",
-        ATTR_UNIT_METRIC: TIME_HOURS,
-        ATTR_UNIT_IMPERIAL: TIME_HOURS,
-    },
-    "UVIndex": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-sunny",
-        ATTR_LABEL: "UV Index",
-        ATTR_UNIT_METRIC: UV_INDEX,
-        ATTR_UNIT_IMPERIAL: UV_INDEX,
-    },
-}
-
-SENSOR_TYPES = {
-    "RealFeelTemperature": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "RealFeelTemperatureShade": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "RealFeel Temperature Shade",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "DewPoint": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "Dew Point",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "UVIndex": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-sunny",
-        ATTR_LABEL: "UV Index",
-        ATTR_UNIT_METRIC: UV_INDEX,
-        ATTR_UNIT_IMPERIAL: UV_INDEX,
-    },
-    "PressureTendency": {
-        ATTR_DEVICE_CLASS: "accuweather__pressure_tendency",
-        ATTR_ICON: "mdi:gauge",
-        ATTR_LABEL: "Pressure Tendency",
-        ATTR_UNIT_METRIC: None,
-        ATTR_UNIT_IMPERIAL: None,
-    },
-    "ApparentTemperature": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "Apparent Temperature",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "WindChillTemperature": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "Wind Chill Temperature",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "WetBulbTemperature": {
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        ATTR_ICON: None,
-        ATTR_LABEL: "Wet Bulb Temperature",
-        ATTR_UNIT_METRIC: TEMP_CELSIUS,
-        ATTR_UNIT_IMPERIAL: TEMP_FAHRENHEIT,
-    },
-    "Precipitation": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-rainy",
-        ATTR_LABEL: "Precipitation",
-        ATTR_UNIT_METRIC: LENGTH_MILIMETERS,
-        ATTR_UNIT_IMPERIAL: LENGTH_INCHES,
-    },
-    "CloudCover": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-cloudy",
-        ATTR_LABEL: "Cloud Cover",
-        ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
-        ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
-    },
-    "Ceiling": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-fog",
-        ATTR_LABEL: "Cloud Ceiling",
-        ATTR_UNIT_METRIC: LENGTH_METERS,
-        ATTR_UNIT_IMPERIAL: LENGTH_FEET,
-    },
-    "WindGust": {
-        ATTR_DEVICE_CLASS: None,
-        ATTR_ICON: "mdi:weather-windy",
-        ATTR_LABEL: "Wind Gust",
-        ATTR_UNIT_METRIC: SPEED_KILOMETERS_PER_HOUR,
-        ATTR_UNIT_IMPERIAL: SPEED_MILES_PER_HOUR,
-    },
-}
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -263,30 +87,37 @@ class AccuWeatherSensor(Entity):
     def state(self):
         """Return the state."""
         if self.forecast_day is not None:
-            if self.kind in [
-                "RealFeelTemperatureMax",
-                "RealFeelTemperatureMin",
-                "RealFeelTemperatureShadeMax",
-                "RealFeelTemperatureShadeMin",
-                "UVIndex",
-            ]:
+            if (
+                FORECAST_SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS]
+                == DEVICE_CLASS_TEMPERATURE
+            ):
+                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                    self.kind
+                ]["Value"]
+            if self.kind in ["WindGustDay", "WindGustNight"]:
+                return self.coordinator.data["DailyForecasts"][self.forecast_day][
+                    self.kind
+                ]["Speed"]["Value"]
+            if self.kind == "UVIndex":
                 return self.coordinator.data["DailyForecasts"][self.forecast_day][
                     self.kind
                 ]["Value"]
             return self.coordinator.data["DailyForecasts"][self.forecast_day][self.kind]
-        if self.kind in ["UVIndex", "CloudCover"]:
-            return self.coordinator.data[self.kind]
         if self.kind == "Ceiling":
             return round(self.coordinator.data[self.kind][self.units]["Value"])
         if self.kind == "PressureTendency":
             return self.coordinator.data[self.kind]["LocalizedText"].lower()
+
+        if SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS] == DEVICE_CLASS_TEMPERATURE:
+            return self.coordinator.data[self.kind][self.units]["Value"]
+
         if self.kind == "Precipitation":
             return self.coordinator.data["PrecipitationSummary"][self.kind][self.units][
                 "Value"
             ]
         if self.kind == "WindGust":
             return self.coordinator.data[self.kind]["Speed"][self.units]["Value"]
-        return self.coordinator.data[self.kind][self.units]["Value"]
+        return self.coordinator.data[self.kind]
 
     @property
     def icon(self):
@@ -313,49 +144,23 @@ class AccuWeatherSensor(Entity):
     def device_state_attributes(self):
         """Return the state attributes."""
         if self.forecast_day is not None:
-            if self.kind == "PrecipitationProbabilityDay":
-                self._attrs["type"] = self.coordinator.data["DailyForecasts"][
+            if self.kind == "WindGustDay":
+                self._attrs["direction"] = self.coordinator.data["DailyForecasts"][
                     self.forecast_day
-                ].get("PrecipitationTypeDay")
-                self._attrs["intensity"] = self.coordinator.data["DailyForecasts"][
+                ][self.kind]["Direction"]["English"]
+            elif self.kind == "WindGustNight":
+                self._attrs["direction"] = self.coordinator.data["DailyForecasts"][
                     self.forecast_day
-                ].get("PrecipitationIntensityDay")
-                self._attrs["rain_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["RainProbabilityDay"]
-                self._attrs["snow_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["SnowProbabilityDay"]
-                self._attrs["ice_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["IceProbabilityDay"]
-            if self.kind == "PrecipitationProbabilityNight":
-                self._attrs["type"] = self.coordinator.data["DailyForecasts"][
-                    self.forecast_day
-                ].get("PrecipitationTypeNight")
-                self._attrs["intensity"] = self.coordinator.data["DailyForecasts"][
-                    self.forecast_day
-                ].get("PrecipitationIntensityNight")
-                self._attrs["rain_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["RainProbabilityNight"]
-                self._attrs["snow_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["SnowProbabilityNight"]
-                self._attrs["ice_probability"] = self.coordinator.data[
-                    "DailyForecasts"
-                ][self.forecast_day]["IceProbabilityNight"]
-            if self.kind == "UVIndex":
+                ][self.kind]["Direction"]["English"]
+            elif self.kind == "UVIndex":
                 self._attrs["level"] = self.coordinator.data["DailyForecasts"][
                     self.forecast_day
                 ][self.kind]["Category"]
             return self._attrs
         if self.kind == "UVIndex":
             self._attrs["level"] = self.coordinator.data["UVIndexText"]
-        if self.kind == "Precipitation":
-            self._attrs["precipitation_type"] = self.coordinator.data[
-                "PrecipitationType"
-            ]
+        elif self.kind == "Precipitation":
+            self._attrs["type"] = self.coordinator.data["PrecipitationType"]
         return self._attrs
 
     @property
