@@ -99,7 +99,7 @@ class AccuWeatherSensor(Entity):
                 return self.coordinator.data[ATTR_FORECAST][self.forecast_day][
                     self.kind
                 ]["Speed"]["Value"]
-            if self.kind == "UVIndex":
+            if self.kind in ["Grass", "Mold", "Ragweed", "Tree", "UVIndex"]:
                 return self.coordinator.data[ATTR_FORECAST][self.forecast_day][
                     self.kind
                 ]["Value"]
@@ -151,7 +151,7 @@ class AccuWeatherSensor(Entity):
                 self._attrs["direction"] = self.coordinator.data[ATTR_FORECAST][
                     self.forecast_day
                 ][self.kind]["Direction"]["English"]
-            elif self.kind == "UVIndex":
+            elif self.kind in ["Grass", "Mold", "Ragweed", "Tree", "UVIndex"]:
                 self._attrs["level"] = self.coordinator.data[ATTR_FORECAST][
                     self.forecast_day
                 ][self.kind]["Category"]

@@ -12,6 +12,7 @@ from homeassistant.const import (
     TIME_HOURS,
     UNIT_PERCENTAGE,
     UV_INDEX,
+    VOLUME_CUBIC_METERS,
 )
 
 ATTRIBUTION = "Data provided by AccuWeather"
@@ -20,6 +21,7 @@ ATTR_FORECAST = "forecast"
 ATTR_LABEL = "label"
 ATTR_UNIT_IMPERIAL = "Imperial"
 ATTR_UNIT_METRIC = "Metric"
+CONCENTRATION_PARTS_PER_CUBIC_METER = f"pp{VOLUME_CUBIC_METERS}"
 CONF_FORECAST = "forecast"
 COORDINATOR = "coordinator"
 DOMAIN = "accuweather"
@@ -60,12 +62,33 @@ FORECAST_SENSOR_TYPES = {
         ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
         ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
     },
+    "Grass": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:grass",
+        ATTR_LABEL: "Grass Pollen",
+        ATTR_UNIT_METRIC: CONCENTRATION_PARTS_PER_CUBIC_METER,
+        ATTR_UNIT_IMPERIAL: CONCENTRATION_PARTS_PER_CUBIC_METER,
+    },
     "HoursOfSun": {
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-partly-cloudy",
         ATTR_LABEL: "Hours Of Sun",
         ATTR_UNIT_METRIC: TIME_HOURS,
         ATTR_UNIT_IMPERIAL: TIME_HOURS,
+    },
+    "Mold": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_LABEL: "Mold Pollen",
+        ATTR_UNIT_METRIC: CONCENTRATION_PARTS_PER_CUBIC_METER,
+        ATTR_UNIT_IMPERIAL: CONCENTRATION_PARTS_PER_CUBIC_METER,
+    },
+    "Ragweed": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:sprout",
+        ATTR_LABEL: "Ragweed Pollen",
+        ATTR_UNIT_METRIC: CONCENTRATION_PARTS_PER_CUBIC_METER,
+        ATTR_UNIT_IMPERIAL: CONCENTRATION_PARTS_PER_CUBIC_METER,
     },
     "RealFeelTemperatureMax": {
         ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
@@ -109,6 +132,13 @@ FORECAST_SENSOR_TYPES = {
         ATTR_UNIT_METRIC: UNIT_PERCENTAGE,
         ATTR_UNIT_IMPERIAL: UNIT_PERCENTAGE,
     },
+    "Tree": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:tree-outline",
+        ATTR_LABEL: "Tree Pollen",
+        ATTR_UNIT_METRIC: CONCENTRATION_PARTS_PER_CUBIC_METER,
+        ATTR_UNIT_IMPERIAL: CONCENTRATION_PARTS_PER_CUBIC_METER,
+    },
     "UVIndex": {
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-sunny",
@@ -138,9 +168,13 @@ OPTIONAL_SENSORS = (
     "CloudCoverDay",
     "CloudCoverNight",
     "DewPoint",
+    # "Grass",
+    # "Mold",
+    # "Ragweed",
     "RealFeelTemperatureShade",
     "RealFeelTemperatureShadeMax",
     "RealFeelTemperatureShadeMin",
+    # "Tree",
     "WetBulbTemperature",
     "WindChillTemperature",
     "WindGust",
