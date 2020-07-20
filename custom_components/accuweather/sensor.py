@@ -11,8 +11,6 @@ from .const import (
     ATTR_FORECAST,
     ATTR_ICON,
     ATTR_LABEL,
-    ATTR_UNIT_IMPERIAL,
-    ATTR_UNIT_METRIC,
     ATTRIBUTION,
     COORDINATOR,
     DOMAIN,
@@ -57,9 +55,7 @@ class AccuWeatherSensor(Entity):
         self.coordinator = coordinator
         self._device_class = None
         self._attrs = {ATTR_ATTRIBUTION: ATTRIBUTION}
-        self.units = (
-            ATTR_UNIT_METRIC if self.coordinator.is_metric else ATTR_UNIT_IMPERIAL
-        )
+        self._unit_system = "Metric" if self.coordinator.is_metric else "Imperial"
         self.forecast_day = forecast_day
 
     @property
@@ -107,17 +103,17 @@ class AccuWeatherSensor(Entity):
                 ]["Value"]
             return self.coordinator.data[ATTR_FORECAST][self.forecast_day][self.kind]
         if self.kind == "Ceiling":
-            return round(self.coordinator.data[self.kind][self.units]["Value"])
+            return round(self.coordinator.data[self.kind][self._unit_system]["Value"])
         if self.kind == "PressureTendency":
             return self.coordinator.data[self.kind]["LocalizedText"].lower()
         if SENSOR_TYPES[self.kind][ATTR_DEVICE_CLASS] == DEVICE_CLASS_TEMPERATURE:
-            return self.coordinator.data[self.kind][self.units]["Value"]
+            return self.coordinator.data[self.kind][self._unit_system]["Value"]
         if self.kind == "Precipitation":
-            return self.coordinator.data["PrecipitationSummary"][self.kind][self.units][
-                "Value"
-            ]
+            return self.coordinator.data["PrecipitationSummary"][self.kind][
+                self._unit_system
+            ]["Value"]
         if self.kind == "WindGust":
-            return self.coordinator.data[self.kind]["Speed"][self.units]["Value"]
+            return self.coordinator.data[self.kind]["Speed"][self._unit_system]["Value"]
         return self.coordinator.data[self.kind]
 
     @property
@@ -138,8 +134,8 @@ class AccuWeatherSensor(Entity):
     def unit_of_measurement(self):
         """Return the unit the value is expressed in."""
         if self.forecast_day is not None:
-            return FORECAST_SENSOR_TYPES[self.kind][self.units]
-        return SENSOR_TYPES[self.kind][self.units]
+            return FORECAST_SENSOR_TYPES[self.kind][self._unit_system]
+        return SENSOR_TYPES[self.kind][self._unit_system]
 
     @property
     def device_state_attributes(self):

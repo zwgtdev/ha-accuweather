@@ -15,14 +15,7 @@ from homeassistant.components.weather import (
 from homeassistant.const import CONF_NAME, STATE_UNKNOWN, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.util.dt import utc_from_timestamp
 
-from .const import (
-    ATTR_FORECAST,
-    ATTR_UNIT_METRIC,
-    ATTRIBUTION,
-    CONDITION_CLASSES,
-    COORDINATOR,
-    DOMAIN,
-)
+from .const import ATTR_FORECAST, ATTRIBUTION, CONDITION_CLASSES, COORDINATOR, DOMAIN
 
 PARALLEL_UPDATES = 1
 
@@ -44,6 +37,7 @@ class AccuWeatherEntity(WeatherEntity):
         self._name = name
         self.coordinator = coordinator
         self._attrs = {}
+        self._unit_system = "Metric" if self.coordinator.is_metric else "Imperial"
 
     @property
     def name(self):
@@ -85,7 +79,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def temperature(self):
         """Return the temperature."""
-        return self.coordinator.data["Temperature"][ATTR_UNIT_METRIC]["Value"]
+        return self.coordinator.data["Temperature"][self._unit_system]["Value"]
 
     @property
     def temperature_unit(self):
@@ -95,7 +89,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def pressure(self):
         """Return the pressure."""
-        return self.coordinator.data["Pressure"][ATTR_UNIT_METRIC]["Value"]
+        return self.coordinator.data["Pressure"][self._unit_system]["Value"]
 
     @property
     def humidity(self):
@@ -105,7 +99,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def wind_speed(self):
         """Return the wind speed."""
-        return self.coordinator.data["Wind"]["Speed"][ATTR_UNIT_METRIC]["Value"]
+        return self.coordinator.data["Wind"]["Speed"][self._unit_system]["Value"]
 
     @property
     def wind_bearing(self):
@@ -115,7 +109,7 @@ class AccuWeatherEntity(WeatherEntity):
     @property
     def visibility(self):
         """Return the visibility."""
-        return self.coordinator.data["Visibility"][ATTR_UNIT_METRIC]["Value"]
+        return self.coordinator.data["Visibility"][self._unit_system]["Value"]
 
     @property
     def ozone(self):
