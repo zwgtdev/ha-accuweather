@@ -83,6 +83,13 @@ FORECAST_SENSOR_TYPES = {
         ATTR_UNIT_METRIC: CONCENTRATION_PARTS_PER_CUBIC_METER,
         ATTR_UNIT_IMPERIAL: CONCENTRATION_PARTS_PER_CUBIC_METER,
     },
+    "Ozone": {
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:vector-triangle",
+        ATTR_LABEL: "Ozone",
+        ATTR_UNIT_METRIC: None,
+        ATTR_UNIT_IMPERIAL: None,
+    },
     "Ragweed": {
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:sprout",
@@ -170,6 +177,7 @@ OPTIONAL_SENSORS = (
     "DewPoint",
     "Grass",
     "Mold",
+    "Ozone",
     "Ragweed",
     "RealFeelTemperatureShade",
     "RealFeelTemperatureShadeMax",
