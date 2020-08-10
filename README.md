@@ -1,8 +1,2 @@
 # AccuWeather integration
-`AccuWeather` integration for Home Assitant
-
-# Configuration
-To configure the integration go to **Configuration** -> **Integrations** -> `+` sign and choose `AccuWeather`.
-
-# API Key
-To generate API key go to https://developer.accuweather.com/user/register and after registration create an app.
+Please use official integration with `Home Assistant` version 0.114 or never.
